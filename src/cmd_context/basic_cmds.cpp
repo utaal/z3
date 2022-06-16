@@ -97,6 +97,13 @@ public:
 
 ATOMIC_CMD(exit_cmd, "exit", "exit.", ctx.print_success(); throw stop_parser_exception(););
 
+ATOMIC_CMD(flush_trace, "flush-trace", "flush the trace stream", if (ctx.m().has_trace_stream()) {
+    if (ctx.has_manager() && ctx.m().has_trace_stream()) {
+        ctx.m().trace_stream().flush();
+    }
+    ctx.regular_stream() << "done";
+});
+
 class get_model_cmd : public cmd {
     unsigned m_index;
 public:
@@ -885,6 +892,7 @@ public:
 void install_basic_cmds(cmd_context & ctx) {
     ctx.insert(alloc(set_logic_cmd));
     ctx.insert(alloc(exit_cmd));
+    ctx.insert(alloc(flush_trace));
     ctx.insert(alloc(get_assignment_cmd));
     ctx.insert(alloc(get_assertions_cmd));
     ctx.insert(alloc(get_proof_cmd));
